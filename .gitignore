@@ -19,12 +19,6 @@ pids
 *.seed
 *.pid.lock
 
-# Media files
-stickers/*
-music/*
-!stickers/.gitkeep
-!music/.gitkeep
-
 # IDE
 .idea/
 .vscode/
