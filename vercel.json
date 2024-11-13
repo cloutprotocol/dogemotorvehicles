@@ -4,12 +4,40 @@
     {
       "src": "chat-server.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "stickers/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "music/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/socket.io/(.*)",
       "dest": "chat-server.js"
+    },
+    {
+      "src": "/stickers/(.*)",
+      "dest": "/stickers/$1"
+    },
+    {
+      "src": "/music/(.*)", 
+      "dest": "/music/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/waiting-room",
+      "dest": "/chat.html"
     },
     {
       "src": "/(.*)",
