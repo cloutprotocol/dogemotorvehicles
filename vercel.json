@@ -8,5 +8,11 @@
     { "src": "/socket.io/(.*)", "dest": "/api/chat.js" },
     { "src": "/waiting-room", "dest": "/public/chat.html" },
     { "src": "/(.*)", "dest": "/public/$1" }
-  ]
+  ],
+  "functions": {
+    "api/**/*.js": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  }
 } 
