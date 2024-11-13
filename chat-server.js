@@ -3,13 +3,16 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http, {
   cors: {
-    origin: "*",
+    origin: ["https://dogemotorvehicles.vercel.app", "http://localhost:3000"],
     methods: ["GET", "POST", "OPTIONS"],
-    credentials: true
+    credentials: true,
+    allowedHeaders: ["*"]
   },
   allowEIO3: true,
   transports: ['polling', 'websocket'],
-  path: '/socket.io/'
+  path: '/socket.io/',
+  pingTimeout: 60000,
+  pingInterval: 25000
 });
 const path = require('path');
 const StickerService = require('./services/stickerService');
@@ -60,6 +63,12 @@ app.get('/playlist', async (req, res) => {
 });
 
 io.on('connection', (socket) => {
+  console.log('Client connected:', socket.id);
+  
+  socket.on('error', (error) => {
+    console.error('Socket error:', error);
+  });
+
   socket.on('join line', (username) => {
     if (username !== 'viewer') {
       room.users.add(socket.id);

@@ -448,7 +448,9 @@
       reconnectionDelayMax: 5000,
       reconnectionAttempts: 5,
       timeout: 20000,
-      autoConnect: true
+      autoConnect: true,
+      forceNew: true,
+      withCredentials: true
     });
     const form = document.getElementById('form');
     const input = document.getElementById('input');
@@ -695,6 +697,20 @@
       console.log('Disconnected:', reason);
       if (reason === 'io server disconnect') {
         // Reconnect if server disconnected
+        socket.connect();
+      }
+    });
+
+    // Add connection status indicator
+    socket.on('connect', () => {
+      console.log('Connected to server:', socket.id);
+      document.body.classList.add('connected');
+    });
+
+    socket.on('disconnect', (reason) => {
+      console.log('Disconnected:', reason);
+      document.body.classList.remove('connected');
+      if (reason === 'io server disconnect') {
         socket.connect();
       }
     });

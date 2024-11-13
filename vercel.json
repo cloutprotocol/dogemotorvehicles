@@ -12,30 +12,27 @@
   ],
   "routes": [
     {
-      "src": "/health",
-      "dest": "chat-server.js"
-    },
-    {
       "src": "/socket.io/(.*)",
-      "dest": "chat-server.js",
+      "dest": "/chat-server.js",
       "headers": {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
-        "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
-        "Access-Control-Allow-Credentials": "true"
-      }
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Max-Age": "86400"
+      },
+      "continue": true
     },
     {
-      "src": "/",
-      "dest": "index.html"
+      "src": "/health",
+      "dest": "/chat-server.js"
     },
     {
-      "src": "/waiting-room",
-      "dest": "chat.html"
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "chat-server.js"
+      "dest": "/chat-server.js"
     }
   ]
 } 
