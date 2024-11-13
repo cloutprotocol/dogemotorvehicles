@@ -8,28 +8,17 @@
     {
       "src": "*.html",
       "use": "@vercel/static"
-    },
-    {
-      "src": "stickers/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "music/**",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/socket.io/(.*)",
-      "dest": "chat-server.js"
-    },
-    {
-      "src": "/stickers/(.*)",
-      "dest": "/stickers/$1"
-    },
-    {
-      "src": "/music/(.*)", 
-      "dest": "/music/$1"
+      "dest": "/chat-server.js",
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+        "Access-Control-Allow-Headers": "*"
+      }
     },
     {
       "src": "/",
@@ -41,7 +30,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "chat-server.js"
+      "dest": "/chat-server.js"
     }
   ]
 } 

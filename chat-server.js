@@ -1,7 +1,14 @@
 const express = require('express');
 const app = express();
 const http = require('http').Server(app);
-const io = require('socket.io')(http);
+const io = require('socket.io')(http, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  },
+  transports: ['websocket'],
+  path: '/socket.io'
+});
 const path = require('path');
 const StickerService = require('./services/stickerService');
 const MusicService = require('./services/musicService');

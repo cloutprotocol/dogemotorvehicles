@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>DMV Waiting Room</title>
+  <link rel="icon" type="image/x-icon" href="data:image/x-icon;,">
   <style>
     body {
       margin: 0;
@@ -442,7 +443,9 @@
   <script>
     const socket = io({
       transports: ['websocket'],
-      path: '/socket.io'
+      path: '/socket.io/',
+      reconnectionAttempts: 3,
+      timeout: 10000
     });
     const form = document.getElementById('form');
     const input = document.getElementById('input');
@@ -674,6 +677,15 @@
         input.classList.add('shake');
         setTimeout(() => input.classList.remove('shake'), 400);
       }
+    });
+
+    // Add error handling
+    socket.on('connect_error', (error) => {
+      console.log('Connection error:', error);
+    });
+
+    socket.on('connect', () => {
+      console.log('Connected to server');
     });
   </script>
 </body>
