@@ -442,10 +442,13 @@
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io({
-      transports: ['websocket'],
+      transports: ['polling', 'websocket'],
       path: '/socket.io/',
-      reconnectionAttempts: 3,
-      timeout: 10000
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      reconnectionAttempts: 5,
+      timeout: 20000,
+      autoConnect: true
     });
     const form = document.getElementById('form');
     const input = document.getElementById('input');
@@ -679,13 +682,21 @@
       }
     });
 
-    // Add error handling
+    // Improve error handling
     socket.on('connect_error', (error) => {
       console.log('Connection error:', error);
+      // Attempt to reconnect on error
+      setTimeout(() => {
+        socket.connect();
+      }, 1000);
     });
 
-    socket.on('connect', () => {
-      console.log('Connected to server');
+    socket.on('disconnect', (reason) => {
+      console.log('Disconnected:', reason);
+      if (reason === 'io server disconnect') {
+        // Reconnect if server disconnected
+        socket.connect();
+      }
     });
   </script>
 </body>

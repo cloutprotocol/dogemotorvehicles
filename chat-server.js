@@ -4,10 +4,12 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http, {
   cors: {
     origin: "*",
-    methods: ["GET", "POST"]
+    methods: ["GET", "POST", "OPTIONS"],
+    credentials: true
   },
-  transports: ['websocket'],
-  path: '/socket.io'
+  allowEIO3: true,
+  transports: ['polling', 'websocket'],
+  path: '/socket.io/'
 });
 const path = require('path');
 const StickerService = require('./services/stickerService');
@@ -87,8 +89,15 @@ io.on('connection', (socket) => {
   });
 });
 
-http.listen(3000, () => {
-  console.log('Server running on port 3000');
+// Update for Vercel
+const port = process.env.PORT || 3000;
+http.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
+
+// Add health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
 });
 
 // Start watching sticker directory for changes
