@@ -1,0 +1,17 @@
+{
+  "name": "dmv-chat",
+  "version": "1.0.0",
+  "description": "DMV Waiting Room Chat",
+  "main": "chat-server.js",
+  "scripts": {
+    "start": "node chat-server.js",
+    "dev": "node chat-server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

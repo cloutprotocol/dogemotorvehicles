@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background: #f8f9fa;
+      color: #333;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #0052a3, #0066CC);
+      color: white;
+      padding: 30px 0; /* Reduced from 40px */
+      text-align: center;
+      border-bottom: 5px solid #FFD700;
+    }
+
+    .logo-container {
+      width: 400px;
+      height: 400px;
+      margin: 0 auto 20px;
+      position: relative;
+    }
+
+    .outer-circle {
+      width: 100%;
+      height: 100%;
+      background: #0066CC;
+      border-radius: 50%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid #FFD700;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .inner-circle {
+      width: 80%;
+      height: 80%;
+      background: #FFD700;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    .doge-logo {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      z-index: 1;
+      opacity: 0.8;
+      animation: rotate 80s linear infinite reverse;
+    }
+
+    .circular-text {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      animation: rotate 80s linear infinite;
+    }
+
+    .circular-text span {
+      position: absolute;
+      left: 50%;
+      transform-origin: 0 200px;
+      color: #FFD700;
+      font-family: 'Arial Black', sans-serif;
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .main-text {
+      font-size: 64px;
+      font-family: 'Comic Sans MS', cursive;
+      position: relative;
+      z-index: 2;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .sub-text {
+      font-size: 24px;
+      font-family: 'Comic Sans MS', cursive;
+      position: relative;
+      z-index: 2;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .hero-text {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+
+    .hero-text h1 {
+      color: #FFD700;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+      font-family: 'Comic Sans MS', cursive;
+    }
+
+    .hero-text p {
+      font-size: 1.6rem;
+      color: #FFD700;
+      font-family: 'Comic Sans MS', cursive;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto; /* Reduced from 40px */
+      padding: 20px;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 3rem;
+      margin-bottom: 50px;
+      color: #0066CC;
+      font-family: 'Comic Sans MS', cursive;
+      text-transform: uppercase;
+      text-shadow: 2px 2px 0 rgba(255,215,0,0.5);
+    }
+
+    .contract-box {
+      background: linear-gradient(145deg, #ffffff, #f5f5f5);
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 60px;
+      border: 2px solid #FFD700;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .contract-box:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .contract-address {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 18px;
+      color: #333;
+      padding: 15px;
+      background: rgba(0,102,204,0.05);
+      border-radius: 6px;
+      flex-grow: 1;
+      margin-right: 15px;
+      border: 1px solid rgba(0,102,204,0.1);
+    }
+
+    .copy-btn {
+      background: linear-gradient(45deg, #0066CC, #0052a3);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .copy-btn:hover {
+      background: linear-gradient(45deg, #0052a3, #004080);
+      transform: translateY(-2px);
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+      margin: 60px 0;
+    }
+
+    .feature-card {
+      background: linear-gradient(145deg, #ffffff, #f5f5f5);
+      padding: 35px;
+      border-radius: 16px;
+      text-align: left;
+      box-shadow: 0 4px 25px rgba(0,102,204,0.1);
+      transition: all 0.3s ease;
+      border: 2px solid rgba(255,215,0,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: #FFD700;
+      box-shadow: 0 8px 30px rgba(0,102,204,0.15);
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: #FFD700;
+      transition: width 0.3s ease;
+    }
+
+    .feature-card:hover::before {
+      width: 8px;
+    }
+
+    .feature-card h3 {
+      color: #0066CC;
+      margin-bottom: 15px;
+      font-size: 24px;
+      font-family: 'Comic Sans MS', cursive;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .feature-card p {
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+
+    .feature-card .emoji {
+      font-size: 28px;
+      margin-right: 10px;
+    }
+
+    .feature-stats {
+      background: rgba(0,102,204,0.05);
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #666;
+      margin-top: 15px;
+      border: 1px solid rgba(0,102,204,0.1);
+    }
+
+    .feature-stats strong {
+      color: #0066CC;
+    }
+
+    .social-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin: 60px 0;
+    }
+
+    .social-btn {
+      background: linear-gradient(45deg, #0066CC, #0052a3);
+      color: white;
+      border: none;
+      padding: 18px 40px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 16px;
+    }
+
+    .social-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .pumpfun { background: linear-gradient(45deg, #FF6B6B, #ee5253); }
+    .telegram { background: linear-gradient(45deg, #0088cc, #00699d); }
+    .twitter { background: linear-gradient(45deg, #1DA1F2, #0d8ecf); }
+
+    .footer {
+      background: linear-gradient(135deg, #0052a3, #0066CC);
+      color: white;
+      padding: 60px 20px;
+      text-align: center;
+      margin-top: 60px;
+      border-top: 5px solid #FFD700;
+    }
+
+    .footer-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 20px 0;
+    }
+
+    .footer a {
+      color: #FFD700;
+      text-decoration: none;
+      transition: all 0.3s;
+      font-weight: bold;
+    }
+
+    .footer a:hover {
+      color: white;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .features {
+        grid-template-columns: 1fr;
+      }
+      
+      .social-buttons {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .social-btn {
+        justify-content: center;
+      }
+      
+      .logo-container {
+        width: 250px;
+        height: 250px;
+      }
+      
+      .circular-text span {
+        transform-origin: 0 125px;
+        font-size: 16px;
+      }
+    }
+
+    .doge {
+      position: fixed;
+      pointer-events: none;
+      z-index: 1000;
+      animation: fall linear;
+    }
+
+    @keyframes fall {
+      from { transform: translateY(-100px) rotate(0deg); }
+      to { transform: translateY(105vh) rotate(360deg); }
+    }
+
+    .get-in-line-btn {
+      background: linear-gradient(45deg, #FFD700, #FFA500);
+      color: #0066CC;
+      font-size: 24px;
+      padding: 20px 40px;
+      border-radius: 12px;
+      border: 3px solid #0066CC;
+      cursor: pointer;
+      font-weight: bold;
+      margin: 20px auto;
+      display: block;
+      transition: all 0.3s;
+      font-family: 'Comic Sans MS', cursive;
+    }
+
+    .get-in-line-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    }
+
+    .waiting-room-stats {
+      background: linear-gradient(145deg, #0066CC, #0052a3);
+      border: 3px solid #FFD700;
+      border-radius: 12px;
+      padding: 30px;
+      margin: 20px auto; /* Reduced from 40px */
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      transform: scale(1.1);
+    }
+
+    .stats-title {
+      color: #FFD700;
+      font-family: 'Comic Sans MS', cursive;
+      font-size: 1.4em;
+      margin-bottom: 15px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .stats-count {
+      font-size: 3em;
+      font-weight: bold;
+      color: white;
+      margin: 20px 0;
+      font-family: 'Comic Sans MS', cursive;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+    }
+
+    .stats-label {
+      font-size: 0.4em;
+      color: #FFD700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .loading-dots {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .loading-dots span {
+      width: 8px;
+      height: 8px;
+      background: #FFD700;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    .loading-dots span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .loading-dots span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.3; }
+      50% { transform: scale(1.2); opacity: 1; }
+    }
+
+    .music-player {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 1000;
+    }
+
+    .play-button {
+      background: linear-gradient(45deg, #0066CC, #0052a3);
+      color: white;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 2px solid #FFD700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      transition: all 0.3s;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .play-button span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    .play-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+
+    .play-button.playing {
+      background: linear-gradient(45deg, #FF6B6B, #ee5253);
+    }
+
+    .music-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-right: 20px;
+    }
+
+    .equalizer {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 20px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .equalizer.playing {
+      opacity: 1;
+    }
+
+    .equalizer-bar {
+      width: 3px;
+      background: #FFD700;
+      border-radius: 1px;
+    }
+
+    .equalizer-bar:nth-child(1) { animation: eq1 0.6s infinite; }
+    .equalizer-bar:nth-child(2) { animation: eq2 0.8s infinite; }
+    .equalizer-bar:nth-child(3) { animation: eq3 0.7s infinite; }
+    .equalizer-bar:nth-child(4) { animation: eq4 0.9s infinite; }
+
+    @keyframes eq1 {
+      0%, 100% { height: 5px; }
+      50% { height: 15px; }
+    }
+
+    @keyframes eq2 {
+      0%, 100% { height: 15px; }
+      50% { height: 5px; }
+    }
+
+    @keyframes eq3 {
+      0%, 100% { height: 10px; }
+      50% { height: 20px; }
+    }
+
+    @keyframes eq4 {
+      0%, 100% { height: 20px; }
+      50% { height: 10px; }
+    }
+
+    .header-music-btn {
+      background: none;
+      border: none;
+      color: #FFD700;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      transition: transform 0.3s;
+    }
+
+    .header-music-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .animated-title {
+      text-align: center;
+      margin: 2rem 0;
+    }
+    .wavy-text {
+      font-size: 2rem;
+      font-weight: bold;
+      background: linear-gradient(45deg, #FFD700, #FFA500, #FFD700);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: wave 2s ease-in-out infinite, gradient 3s linear infinite;
+    }
+    @keyframes wave {
+      0%, 100% { transform: translateY(0) rotate(-2deg); }
+      50% { transform: translateY(-15px) rotate(2deg); }
+    }
+    @keyframes gradient {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo-container">
+      <div class="outer-circle">
+        <div class="circular-text" id="circularText"></div>
+        <div class="inner-circle">
+          <img src="/stickers/doge.webp" class="doge-logo" alt="Doge">
+          <div class="main-text">$DMV</div>
+          <div class="sub-text">MUCH DRIVING...</div>
+          <div class="sub-text">VERY LICENSE</div>
+        </div>
+      </div>
+
+    </div>
+    <div class="hero-text">
+      <h1>Doge Motor Vehicles</h1>
+      <div class="contract-address" style="color: #ffffff;">
+        <span>Contract: </span>
+        <code>DMVeh7HNPZxVSfqXHmAyWBY1QqjMhpuBkXBGEjKF8Ry</code>
+        <button onclick="copyAddress()" class="copy-btn">
+          <span class="copy-icon">📋</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="animated-title">
+    <p class="wavy-text">The Official DMV Waiting Room Experience 🚀</p>
+  </div>
+
+  <div class="container">
+    
+    <!-- <h2 class="section-title">DMV Waiting Room</h2> -->
+    <div class="waiting-room-stats">
+      <div class="stats-title">Current Waiting Room</div>
+      <div class="stats-count">
+        <span id="peopleCount">0</span>
+        <span class="stats-label">people in line</span>
+      </div>
+      <div class="stats-animation">
+        <div class="loading-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+
+    <button class="get-in-line-btn" onclick="joinLine()">
+      🎫 GET IN LINE 🎫
+    </button>
+
+    <div class="features">
+      <div class="feature-card">
+        <span class="emoji">🎵</span>
+        <h3>Waiting Room Radio</h3>
+        <p>Enjoy some tunes while you wait. Our carefully curated playlist of elevator music will make time fly!</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="emoji">💬</span>
+        <h3>Chat With Fellow DOGEs</h3>
+        <p>Share memes and make friends with other holders waiting in line. Remember to keep it friendly!</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="emoji">🎯</span>
+        <h3>First Come, First Served</h3>
+        <p>Your spot in line is secured. The longer you wait, the more committed you are (probably).</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="emoji">🌟</span>
+        <h3>VIP Treatment</h3>
+        <p>Everyone's a VIP in our waiting room, especially $DMV token holders. Except that guy. You know the one.</p>
+      </div>
+    </div>
+
+    <div class="social-buttons">
+      <button class="social-btn pumpfun">
+        💊 PumpFun
+      </button>
+      <button class="social-btn twitter">
+        𝕏 Twitter
+      </button>
+    </div>
+  </div>
+
+  <div class="music-player">
+    <audio id="elevatorMusic" loop>
+      <source src="/music/elevator.mp3" type="audio/mp3">
+    </audio>
+    <button id="playButton" class="play-button" onclick="toggleMusic()">
+      <span>🎵</span>
+    </button>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <p>$DMV - The Official Department of Meme Vehicles</p>
+      <div class="footer-links">
+        <a href="#">Whitepaper</a>
+        <a href="#">Documentation</a>
+        <a href="#">Terms</a>
+        <a href="#">Privacy</a>
+      </div>
+      <p>© 2024 $DMV. All rights reserved. DYOR! Not financial advice.</p>
+    </div>
+  </footer>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    function createCircularText() {
+      const text = "STATE OF SOLANA    DOGE MOTOR VEHICLES    ";
+      const textElement = document.getElementById('circularText');
+      const chars = text.split('');
+      
+      chars.forEach((char, i) => {
+        const span = document.createElement('span');
+        span.textContent = char;
+        const rotation = (i * 360) / chars.length;
+        span.style.transform = `rotate(${rotation}deg)`;
+        textElement.appendChild(span);
+      });
+    }
+
+    const DOGE_BASE64 = 'data:image/webp;base64,UklGRlYFAABXRUJQVlA4WAoAAAAQAAAALwAALwAAQUxQSGIAAAABgFvbtiFJUlrbtrVt27Zt27Zt27Zt2/bOmV2z+v0R8R8B/P+Tf5L/k3+S/w0AqiZ5dh6YPGrw4FGTZx/IkzSpqiLJ0zXsMG7D1buPHz99fHR17YR2DdMnVxw5h8w/+ezVh89f3j+7eXDJxE7FU0QqUdZ+j7/L9z+/3D2xaWKHXLGqMYlz9T3y4qdwvL6+Z27LNKG+y1Bx+qO/4eTT5dkVo3yUKX7DLT/E1Yv9NUJ8kKfOsm/i4+3ZSUO8TlN91Rfx/d2tPX2Txqk0zXf+Fn9/PjvWL7arNM1Pif+/3l4YHc81mhI7f8jAr7fnRsRxhabuql8y+P3FvgYu0DQ+JsP/fLo8KZ7TNPnmvZWRXx/s7hLLWZr2F37L6NfHR0Rxkqb3NRn77dWx3s7RVFz8U8Z/ebKrjmM0Zae/kvEf7m+t4hRNqysy4fvzg+0doim/9KdM+Hx3XVlnaIoek4nvb68r5AhNsU0/ZeL7O+tLOkFTfP1XmfTt+eGOjtBk6n1dJn+8v6WqEzSpe52XyR/ubyjnBE3mIbdl8qeH28s7QZNr0j2Z/OnR7ppO0BSc81Amf3q8v4kjNJWXf5bJnx7treMITb1tv2Typ0d76zhC0/qMTP70aE9tR2g6XpLJnx7tqeMITfcbMvnTo921HKHpfVcmf3q4o4YjNAPuy+QPDzZXdoRm6EOZ/P7u+rJO0Ix4JJPfXV9Y0hGaCU9k8rsrM/I7QTP1mUx+e2FUbGdoZr+QyW/OjYjpFM38VzL5zdmhMZyiWfxGJr85MziaYzTL38rkN6cHRXWOZtU7mfz6eP+oTtKs/SCTXx3rG8VZmvWfZPKrI70jO0yz6bNMfnWwR0TnaXZ8lckvD3SL4AuaXd9l8su9ncP6hmb3D5n8Ym/HsD6i2ftLJj/f0z6cr2gO/JbJz3a3DeM7msN/ZPKzXa1D+5Dm6D+Z/HRny1A+pTn+Xyb/t6NFSJ/SnPwvk59saxrC1zRnhUx+vKVxcN/TnBcy+dGm+kF9T3NRyORH6+sG8wPNVSGTH66tHdQfNDeFTH6wpnogv9DcFjL5/qqqAfxDc0/I5HsrK/n7ieaBkMl3l5f39xfNIyGT7ywt6+c/msdCJt9eXMrPnzRPhEy+taiEn19pngqZfHN+MT8/0zwTMvn63EJ+/qZ5IWTy1VkF/PxP80rI5CvT8/oHguaNkMmXp+UJCBCad0ImX5qSKzBQaD4ImXxhUs6AAKH5JGTyp/HZAwOH5ouQyR9GZwsQIJrvQiZ/GJk1UKDQfBcy+f2wzIEDh+aHkMnvBmcMJEA0P4VM/m9ghsCCRPNLyOS3/dIHGiyaP0Imv+6bLvCA0fwVMvlVrzRBCBrNPyGTX3ZPHZzA0QghZPLzLqmCFTyaf0Imf+iUMojBpBFCyOSP7VMENaA0Qsjkj21TBDeoNEIImfypdYpgB5ZGCJn8uUWKoAeYRgiZ/KVZ8uAHmkYImfy1cfIQCDiNEDL5e4PkoRB4GiFk8o96SUMi+DRCyOR/6yQNjSDUCCGT/62VNESCUSNk8v81k4ZKUGqETP63etKQCU6NkMn/Vk0aPAGqETL532pJQyhQNUIm/1slaRgFrEbI5H8rJw2nwNUImfxvxaThFMAaIZP/LZ80rAJZI2TyvyWThlZAa4RM/rdY0vAKbI2Qyf8WTRpmAa4RMvnfIknDLeA1Qib/WyhpA='; 
+
+    let isRaining = false;
+    let rainInterval;
+
+    function createDoge() {
+      const doge = document.createElement('img');
+      doge.src = DOGE_BASE64;
+      doge.className = 'doge';
+      doge.style.left = Math.random() * 100 + 'vw';
+      doge.style.width = (Math.random() * 30 + 20) + 'px';
+      doge.style.animationDuration = (Math.random() * 3 + 2) + 's';
+      
+      document.body.appendChild(doge);
+      doge.onanimationend = () => doge.remove();
+    }
+
+    function toggleDogeRain() {
+      const button = document.getElementById('rainButton');
+      if (!isRaining) {
+        rainInterval = setInterval(createDoge, 500);
+        button.textContent = 'Stop Rain';
+      } else {
+        clearInterval(rainInterval);
+        button.textContent = 'Make It Rain';
+      }
+      isRaining = !isRaining;
+    }
+
+    function playLineSound() {
+      const audio = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgA');
+      audio.play().catch(err => console.log('Audio play failed:', err));
+      
+      // Create extra doges when button pressed
+      for(let i = 0; i < 10; i++) {
+        setTimeout(createDoge, i * 100);
+      }
+    }
+
+    const socket = io();
+    
+    // Join as viewer when page loads
+    socket.emit('join line', 'viewer');
+
+    // Update counter when line changes
+    socket.on('line update', (count) => {
+      const counter = document.getElementById('peopleCount');
+      if (counter) {
+        counter.textContent = count;
+      }
+    });
+
+    function joinLine() {
+      playLineSound();
+      window.location.href = '/waiting-room';
+    }
+
+    window.onload = () => {
+      createCircularText();
+      toggleDogeRain();
+    };
+
+    let musicPlaying = false;
+    const elevatorMusic = document.getElementById('elevatorMusic');
+
+    function toggleMusic() {
+      const playButton = document.getElementById('playButton');
+      const buttonSpan = playButton.querySelector('span');
+      
+      if (musicPlaying) {
+        elevatorMusic.pause();
+        buttonSpan.textContent = '🎵';
+        playButton.classList.remove('playing');
+      } else {
+        elevatorMusic.play().catch(err => console.log('Music play failed:', err));
+        buttonSpan.textContent = '⏸️';
+        playButton.classList.add('playing');
+      }
+      musicPlaying = !musicPlaying;
+    }
+  </script>
+</body>
+</html>

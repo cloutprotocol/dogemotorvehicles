@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DMV Waiting Room</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background: #f8f9fa;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #0052a3, #0066CC);
+      color: white;
+      padding: 15px 25px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 5px solid #FFD700;
+      position: relative;
+      z-index: 1001;
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .header-title h1 {
+      margin: 0;
+      font-family: 'Comic Sans MS', cursive;
+    }
+
+    .dmv-logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #FFD700;
+      font-family: 'Comic Sans MS', cursive;
+    }
+
+    .online-counter {
+      background: linear-gradient(145deg, #0066CC, #0052a3);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      border: 2px solid #FFD700;
+      font-family: 'Comic Sans MS', cursive;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #chat-container {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 120px);
+      background: white;
+      border-top: none;
+      position: relative;
+    }
+
+    #messages {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 20px;
+      background: white;
+    }
+
+    .message {
+      margin: 10px 0;
+      padding: 12px 15px;
+      background: #f0f0f0;
+      border-radius: 8px;
+      max-width: 80%;
+      clear: both;
+      float: left;
+    }
+
+    .message.self {
+      float: right;
+      background: #0066CC;
+      color: white;
+    }
+
+    .message-header {
+      font-size: 0.8em;
+      margin-bottom: 5px;
+      color: #666;
+    }
+
+    .message.self .message-header {
+      color: #FFD700;
+    }
+
+    #form {
+      display: flex;
+      padding: 15px;
+      background: #f8f9fa;
+      border-top: none;
+      gap: 10px;
+    }
+
+    #input {
+      flex-grow: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      background: #f0f2f5;
+      transition: background 0.3s;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+
+    #input:focus {
+      outline: none;
+      background: #e4e6eb;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    #input::selection {
+      background: transparent;
+    }
+
+    #input::-moz-selection {
+      background: transparent;
+    }
+
+    #input::placeholder {
+      color: #65676b;
+    }
+
+    /* Remove mobile tap highlight */
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button[type="submit"] {
+      padding: 12px 30px;
+      background: linear-gradient(45deg, #0066CC, #0052a3);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+      min-width: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    button[type="submit"]:hover {
+      background: linear-gradient(45deg, #0052a3, #004080);
+    }
+
+    .username {
+      font-weight: bold;
+      color: #0066CC;
+    }
+
+    .message.self .username {
+      color: #FFD700;
+    }
+
+    .timestamp {
+      color: #999;
+      font-size: 0.8em;
+    }
+
+    .message.self .timestamp {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    #typing-indicator {
+      padding: 5px 15px;
+      color: #666;
+      font-style: italic;
+      font-size: 0.9em;
+    }
+
+    .sticker-panel {
+      position: fixed;
+      bottom: 80px;
+      left: 0;
+      right: 0;
+      background: rgba(255,255,255,0.95);
+      padding: 15px;
+      border-top: 3px solid #FFD700;
+      display: none;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 100;
+    }
+
+    .sticker-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 10px;
+      padding: 10px;
+    }
+
+    .sticker-item {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      cursor: pointer;
+      transition: transform 0.2s;
+      padding: 5px;
+      border-radius: 8px;
+    }
+
+    .sticker-item:hover {
+      transform: scale(1.1);
+      background: rgba(0,102,204,0.1);
+    }
+
+    .sticker-button {
+      background: none;
+      border: none;
+      font-size: 24px;
+      padding: 10px;
+      cursor: pointer;
+      color: #0066CC;
+    }
+
+    .message img {
+      max-width: 150px;
+      border-radius: 8px;
+    }
+
+    .chat-controls {
+      display: flex;
+      gap: 10px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-top: 3px solid #FFD700;
+    }
+
+    #form {
+      flex-grow: 1;
+      display: flex;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+    }
+
+    .message-text {
+      margin-top: 5px;
+      word-break: break-word;
+    }
+
+    .ticket-number {
+      background: #FFD700;
+      color: #0066CC;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-family: 'Comic Sans MS', cursive;
+      font-weight: bold;
+      margin-left: 15px;
+    }
+
+    .music-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: 15px;
+    }
+
+    .equalizer {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 20px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .equalizer.playing {
+      opacity: 1;
+    }
+
+    .equalizer-bar {
+      width: 3px;
+      background: #FFD700;
+      border-radius: 1px;
+    }
+
+    .equalizer-bar:nth-child(1) { animation: eq1 0.6s infinite; }
+    .equalizer-bar:nth-child(2) { animation: eq2 0.8s infinite; }
+    .equalizer-bar:nth-child(3) { animation: eq3 0.7s infinite; }
+    .equalizer-bar:nth-child(4) { animation: eq4 0.9s infinite; }
+
+    @keyframes eq1 {
+      0%, 100% { height: 5px; }
+      50% { height: 15px; }
+    }
+
+    @keyframes eq2 {
+      0%, 100% { height: 15px; }
+      50% { height: 5px; }
+    }
+
+    @keyframes eq3 {
+      0%, 100% { height: 10px; }
+      50% { height: 20px; }
+    }
+
+    @keyframes eq4 {
+      0%, 100% { height: 20px; }
+      50% { height: 10px; }
+    }
+
+    .header-music-btn {
+      background: none;
+      border: none;
+      color: #FFD700;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      transition: transform 0.3s;
+    }
+
+    .header-music-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .music-controls {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .playlist-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .skip-btn {
+      background: none;
+      border: none;
+      color: #FFD700;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      transition: transform 0.3s;
+    }
+
+    .skip-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .track-info {
+      color: #FFD700;
+      font-size: 14px;
+      max-width: 150px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    @keyframes flashRed {
+      0%, 100% { 
+        background: linear-gradient(45deg, #0066CC, #0052a3);
+        content: "Send";
+      }
+      50% { 
+        background: linear-gradient(45deg, #FF6B6B, #ee5253);
+      }
+    }
+
+    .flash-red {
+      animation: flashRed 0.4s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+  <audio id="elevatorMusic" loop>
+    <source src="/music/elevator.mp3" type="audio/mp3">
+  </audio>
+  <div class="header">
+    <div class="header-title">
+      <a href="/" class="dmv-logo" style="text-decoration: none;">$DMV</a>
+      <h1>Waiting Room</h1>
+      <div class="music-control">
+        <div class="music-controls">
+          <button class="skip-btn" onclick="previousTrack()">⏮️</button>
+          <button class="header-music-btn" onclick="toggleMusic()">
+            🎵
+          </button>
+          <button class="skip-btn" onclick="nextTrack()">⏭️</button>
+        </div>
+        <div class="equalizer" id="equalizer">
+          <div class="equalizer-bar"></div>
+          <div class="equalizer-bar"></div>
+          <div class="equalizer-bar"></div>
+          <div class="equalizer-bar"></div>
+        </div>
+        <div class="track-info" id="trackInfo"></div>
+      </div>
+      <div id="ticketNumber" class="ticket-number"></div>
+    </div>
+    <div class="online-counter">
+      👥 <span id="peopleCount">0</span> in line
+    </div>
+  </div>
+
+  <div id="chat-container">
+    <div id="messages"></div>
+    <div id="typing-indicator"></div>
+    
+    <div class="sticker-panel" id="stickerPanel">
+      <div class="sticker-grid" id="stickerGrid">
+        <!-- Stickers will be loaded here -->
+      </div>
+    </div>
+
+    <div class="chat-controls">
+      <button class="sticker-button" onclick="toggleStickers()">😊</button>
+      <form id="form">
+        <input id="input" autocomplete="off" placeholder="Chat with others in line..."/>
+        <button type="submit">Send</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const form = document.getElementById('form');
+    const input = document.getElementById('input');
+    const messages = document.getElementById('messages');
+    const peopleCount = document.getElementById('peopleCount');
+    const ticketNumber = document.getElementById('ticketNumber');
+    const typingIndicator = document.getElementById('typing-indicator');
+
+    // Username generation
+    const adjectives = [
+      'Sleepy', 'Happy', 'Grumpy', 'Sneezy', 'Bashful', 'Dopey', 'Doc',
+      'Diamond', 'Paper', 'Iron', 'Golden', 'Crypto', 'Mega', 'Super',
+      'Hyper', 'Ultra', 'Quantum', 'Cosmic', 'Lunar', 'Solar', 'Based',
+      'Bullish', 'Bearish', 'Degen', 'Alpha', 'Beta', 'Gamma', 'Delta',
+      'Omega', 'Sigma', 'Pixel', 'Digital', 'Virtual', 'Cyber', 'Tech',
+      'Meme', 'Epic', 'Legendary', 'Rare', 'Common', 'Uncommon', 'Unique'
+    ];
+
+    const nouns = [
+      'Doge', 'Shiba', 'Pup', 'Moon', 'Rocket', 'Diamond', 'Hodler',
+      'Hands', 'Paws', 'Coin', 'Token', 'Wallet', 'Chain', 'Block',
+      'Trader', 'Ape', 'Bull', 'Bear', 'Whale', 'Fish', 'Shark',
+      'Chad', 'Wojak', 'Pepe', 'Miner', 'Farmer', 'Hunter', 'Wizard',
+      'Knight', 'Ninja', 'Samurai', 'Viking', 'Pirate', 'Robot',
+      'Alien', 'Ghost', 'Spirit', 'Dragon', 'Phoenix', 'Griffin'
+    ];
+
+    const numbers = () => Math.floor(Math.random() * 9999).toString().padStart(4, '0');
+
+    function generateUsername() {
+      const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+      const noun = nouns[Math.floor(Math.random() * nouns.length)];
+      const num = Math.random() > 0.5 ? numbers() : '';
+      return `${adj}${noun}${num}`;
+    }
+
+    const username = generateUsername();
+    ticketNumber.textContent = 'A' + Math.floor(Math.random() * 1000);
+    
+    socket.emit('join line', username);
+
+    let typingTimeout;
+    input.addEventListener('input', () => {
+      socket.emit('typing', username);
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => socket.emit('stop typing'), 1000);
+    });
+
+    socket.on('typing', (user) => {
+      typingIndicator.textContent = `${user} is typing...`;
+    });
+
+    socket.on('stop typing', () => {
+      typingIndicator.textContent = '';
+    });
+
+    socket.on('line update', (count) => {
+      peopleCount.textContent = count;
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = input.value.trim();
+      const submitButton = form.querySelector('button[type="submit"]');
+      
+      // Link detection regex
+      const linkRegex = /(https?:\/\/[^\s]+)|(www\.[^\s]+)|(\S+\.\S+\/\S*)|(\S+\.(com|org|net|io|xyz|eth|sol)\S*)/gi;
+      
+      if (text) {
+        if (linkRegex.test(text)) {
+          submitButton.textContent = '❌';
+          submitButton.classList.add('flash-red');
+          
+          setTimeout(() => {
+            submitButton.classList.remove('flash-red');
+            submitButton.textContent = 'Send';
+          }, 400);
+          
+          return;
+        }
+
+        socket.emit('chat message', {
+          text: text,
+          username: username,
+          timestamp: new Date().toLocaleTimeString()
+        });
+        input.value = '';
+      }
+    });
+
+    socket.on('chat message', (msg) => {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${msg.id === socket.id ? 'self' : ''}`;
+      
+      const header = document.createElement('div');
+      header.className = 'message-header';
+      header.innerHTML = `${msg.username} - ${msg.timestamp}`;
+      
+      const content = document.createElement('div');
+      content.className = 'message-text';
+      
+      if (msg.isSticker) {
+        content.innerHTML = msg.text;
+      } else {
+        content.textContent = msg.text;
+      }
+      
+      messageDiv.appendChild(header);
+      messageDiv.appendChild(content);
+      messages.appendChild(messageDiv);
+      
+      // Ensure scroll to bottom
+      messages.scrollTop = messages.scrollHeight;
+    });
+
+    async function loadStickers() {
+      try {
+        const response = await fetch('/stickers-list');
+        const stickers = await response.json();
+        const grid = document.getElementById('stickerGrid');
+        grid.innerHTML = '';
+        
+        stickers.forEach(sticker => {
+          const img = document.createElement('img');
+          img.src = sticker.path;
+          img.className = 'sticker-item';
+          img.alt = sticker.name;
+          img.loading = 'lazy';
+          img.onclick = () => sendSticker(sticker.name);
+          grid.appendChild(img);
+        });
+      } catch (err) {
+        console.log('Error loading stickers:', err);
+      }
+    }
+
+    function toggleStickers() {
+      const panel = document.getElementById('stickerPanel');
+      panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function sendSticker(stickerName) {
+      const timestamp = new Date().toLocaleTimeString();
+      socket.emit('chat message', {
+        text: `<img src="/stickers/${encodeURIComponent(stickerName)}" alt="sticker">`,
+        username: username,
+        timestamp: timestamp,
+        isSticker: true
+      });
+      toggleStickers();
+    }
+
+    // Load stickers when page loads
+    window.onload = loadStickers;
+
+    let playlist = [];
+    let currentTrackIndex = 0;
+    let musicPlaying = false;
+
+    async function loadPlaylist() {
+      try {
+        const response = await fetch('/playlist');
+        playlist = await response.json();
+        if (playlist.length > 0) {
+          loadTrack(currentTrackIndex);
+        }
+      } catch (err) {
+        console.log('Error loading playlist:', err);
+      }
+    }
+
+    function loadTrack(index) {
+      const audio = document.getElementById('elevatorMusic');
+      const trackInfo = document.getElementById('trackInfo');
+      
+      if (playlist[index]) {
+        audio.src = playlist[index].path;
+        trackInfo.textContent = playlist[index].name;
+        if (musicPlaying) {
+          audio.play();
+        }
+      }
+    }
+
+    function nextTrack() {
+      currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+      loadTrack(currentTrackIndex);
+    }
+
+    function previousTrack() {
+      currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+      loadTrack(currentTrackIndex);
+    }
+
+    function toggleMusic() {
+      const headerButton = document.querySelector('.header-music-btn');
+      const equalizer = document.getElementById('equalizer');
+      const audio = document.getElementById('elevatorMusic');
+      
+      if (musicPlaying) {
+        audio.pause();
+        headerButton.textContent = '🎵';
+        equalizer.classList.remove('playing');
+      } else {
+        audio.play()
+          .then(() => {
+            headerButton.textContent = '⏸️';
+            equalizer.classList.add('playing');
+          })
+          .catch(err => console.log('Music play failed:', err));
+      }
+      musicPlaying = !musicPlaying;
+    }
+
+    // Add event listener for track end
+    document.getElementById('elevatorMusic').addEventListener('ended', () => {
+      nextTrack();
+    });
+
+    // Load playlist when page loads
+    window.onload = () => {
+      loadStickers();
+      loadPlaylist();
+    };
+
+    input.addEventListener('input', () => {
+      const linkRegex = /(https?:\/\/[^\s]+)|(www\.[^\s]+)|(\S+\.\S+\/\S*)|(\S+\.(com|org|net|io|xyz|eth|sol)\S*)/gi;
+      if (linkRegex.test(input.value)) {
+        input.classList.add('shake');
+        setTimeout(() => input.classList.remove('shake'), 400);
+      }
+    });
+  </script>
+</body>
+</html> 
