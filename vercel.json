@@ -18,6 +18,7 @@
       },
       "continue": true
     },
+    { "src": "/socket.io.js", "dest": "/public/socket.io.js" },
     { "src": "/stickers-list", "dest": "/api/stickers.js" },
     { "src": "/playlist", "dest": "/api/playlist.js" },
     { "src": "/waiting-room", "dest": "/public/chat.html" },
