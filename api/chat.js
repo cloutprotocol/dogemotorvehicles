@@ -6,34 +6,31 @@ import path from "path";
 const users = new Set();
 const messages = [];
 
-// Initialize services with paths relative to public directory
 const stickerService = new StickerService(path.join(process.cwd(), 'public/stickers'));
 const musicService = new MusicService(path.join(process.cwd(), 'public/music'));
 
 export default async function SocketHandler(req, res) {
   if (!res.socket.server.io) {
     const io = new Server(res.socket.server, {
-      path: '/socket.io/',
+      path: '/socket.io',
       addTrailingSlash: false,
       cors: {
         origin: "*",
-        methods: ["GET", "POST"]
-      },
-      transports: ['websocket', 'polling'],
-      pingTimeout: 60000,
-      pingInterval: 25000
+        methods: ["GET", "POST"],
+        credentials: true
+      }
     });
 
     io.on('connection', async socket => {
-      console.log('Client connected');
+      console.log('Client connected to Vercel');
 
-      // Send initial stickers and music data
       const stickers = await stickerService.getStickers();
       const playlist = await musicService.getPlaylist();
       socket.emit('stickers', stickers);
       socket.emit('playlist', playlist);
 
       socket.on('join line', (role) => {
+        console.log('User joined:', role);
         if (role !== 'viewer') {
           users.add(socket.id);
           socket.username = role;

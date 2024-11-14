@@ -463,16 +463,25 @@
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io({
-      transports: ['polling', 'websocket'],
-      path: '/socket.io/',
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000,
-      reconnectionAttempts: 5,
-      timeout: 20000,
-      autoConnect: true,
-      forceNew: true,
-      withCredentials: true
+        path: '/socket.io',
+        transports: ['websocket', 'polling'],
+        autoConnect: true,
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000
     });
+
+    // Add connection status logging
+    socket.on('connect', () => {
+        console.log('Connected to server:', socket.id);
+        document.body.classList.add('connected');
+    });
+
+    socket.on('connect_error', (error) => {
+        console.error('Connection error:', error);
+        setTimeout(() => socket.connect(), 1000);
+    });
+
     const form = document.getElementById('form');
     const input = document.getElementById('input');
     const messages = document.getElementById('messages');
