@@ -9,13 +9,10 @@
     { "src": "/waiting-room", "dest": "/public/chat.html" },
     { "src": "^/$", "dest": "/public/index.html" },
     { "src": "/stickers/(.*)", "dest": "/public/stickers/$1" },
-    { "src": "/music/(.*)", "dest": "/public/music/$1" }
+    { "src": "/music/(.*)", "dest": "/public/music/$1" },
+    { "src": "^/index.html", "dest": "/public/index.html" },
+    { "src": "^/chat.html", "dest": "/public/chat.html" },
+    { "src": "/(.+)", "dest": "/public/$1" }
   ],
-  "regions": ["sfo1"],
-  "functions": {
-    "api/chat.js": {
-      "memory": 1024,
-      "maxDuration": 10
-    }
-  }
+  "regions": ["sfo1"]
 } 
