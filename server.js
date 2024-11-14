@@ -2,9 +2,16 @@ const express = require('express');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
+const StickerService = require('./api/services/stickerService');
+const MusicService = require('./api/services/musicService');
 
 const app = express();
 const httpServer = createServer(app);
+
+// Initialize services
+const stickerService = new StickerService(path.join(__dirname, 'public/stickers'));
+const musicService = new MusicService(path.join(__dirname, 'public/music'));
+
 const io = new Server(httpServer, {
   path: '/socket.io/',
   addTrailingSlash: false,
@@ -29,8 +36,14 @@ app.get('/waiting-room', (req, res) => {
 const users = new Set();
 const messages = [];
 
-io.on('connection', socket => {
+io.on('connection', async socket => {
   console.log('Client connected');
+
+  // Send initial stickers and music data
+  const stickers = await stickerService.getStickers();
+  const playlist = await musicService.getPlaylist();
+  socket.emit('stickers', stickers);
+  socket.emit('playlist', playlist);
 
   socket.on('join line', (role) => {
     if (role !== 'viewer') {

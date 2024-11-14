@@ -387,6 +387,27 @@
     .flash-red {
       animation: flashRed 0.4s ease-in-out;
     }
+
+    .sticker-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 10px;
+    }
+
+    .sticker {
+      width: 64px;
+      height: 64px;
+      cursor: pointer;
+      object-fit: contain;
+    }
+
+    .chat-sticker {
+      max-width: 128px;
+      max-height: 128px;
+      border-radius: 4px;
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -552,8 +573,11 @@
       const content = document.createElement('div');
       content.className = 'message-text';
       
-      if (msg.isSticker) {
-        content.innerHTML = msg.text;
+      if (msg.type === 'sticker') {
+        const img = document.createElement('img');
+        img.src = msg.content;
+        img.className = 'chat-sticker';
+        content.appendChild(img);
       } else {
         content.textContent = msg.text;
       }
@@ -562,7 +586,6 @@
       messageDiv.appendChild(content);
       messages.appendChild(messageDiv);
       
-      // Ensure scroll to bottom
       messages.scrollTop = messages.scrollHeight;
     });
 
@@ -712,6 +735,32 @@
       document.body.classList.remove('connected');
       if (reason === 'io server disconnect') {
         socket.connect();
+      }
+    });
+
+    // Handle stickers loading
+    socket.on('stickers', (stickers) => {
+      console.log('Received stickers:', stickers);
+      const stickerGrid = document.getElementById('stickerGrid');
+      if (stickerGrid) {
+        stickerGrid.innerHTML = '';
+        stickers.forEach(sticker => {
+          const img = document.createElement('img');
+          img.src = sticker.path;
+          img.alt = sticker.name;
+          img.className = 'sticker-item';
+          img.onclick = () => {
+            socket.emit('chat message', {
+              type: 'sticker',
+              content: sticker.path,
+              username: username,
+              text: '', // Clear text field for sticker messages
+              timestamp: new Date().toLocaleTimeString()
+            });
+            toggleStickers();
+          };
+          stickerGrid.appendChild(img);
+        });
       }
     });
   </script>

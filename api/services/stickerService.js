@@ -9,7 +9,9 @@ class StickerService {
 
   async getStickers() {
     try {
+      console.log('Scanning directory:', this.stickerDirectory);
       const files = await fs.readdir(this.stickerDirectory);
+      console.log('Found files:', files);
       const stickers = [];
 
       for (const file of files) {
@@ -24,6 +26,7 @@ class StickerService {
         }
       }
 
+      console.log('Processed stickers:', stickers);
       return stickers.sort((a, b) => a.name.localeCompare(b.name));
     } catch (error) {
       console.error('Error loading stickers:', error);

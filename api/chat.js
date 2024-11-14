@@ -1,9 +1,16 @@
 import { Server } from "socket.io";
+import StickerService from "./services/stickerService";
+import MusicService from "./services/musicService";
+import path from "path";
 
 const users = new Set();
 const messages = [];
 
-export default function SocketHandler(req, res) {
+// Initialize services with paths relative to public directory
+const stickerService = new StickerService(path.join(process.cwd(), 'public/stickers'));
+const musicService = new MusicService(path.join(process.cwd(), 'public/music'));
+
+export default async function SocketHandler(req, res) {
   if (!res.socket.server.io) {
     const io = new Server(res.socket.server, {
       path: '/socket.io/',
@@ -17,8 +24,14 @@ export default function SocketHandler(req, res) {
       pingInterval: 25000
     });
 
-    io.on('connection', socket => {
+    io.on('connection', async socket => {
       console.log('Client connected');
+
+      // Send initial stickers and music data
+      const stickers = await stickerService.getStickers();
+      const playlist = await musicService.getPlaylist();
+      socket.emit('stickers', stickers);
+      socket.emit('playlist', playlist);
 
       socket.on('join line', (role) => {
         if (role !== 'viewer') {
