@@ -19,13 +19,24 @@ const io = new Server(httpServer, {
     origin: "*",
     methods: ["GET", "POST"]
   },
-  transports: ['websocket', 'polling'],
+  transports: ['polling'],
   pingTimeout: 60000,
   pingInterval: 25000
 });
 
 // Serve static files from public directory
 app.use(express.static('public'));
+
+// API Routes
+app.get('/stickers-list', async (req, res) => {
+  const stickers = await stickerService.getStickers();
+  res.json(stickers);
+});
+
+app.get('/playlist', async (req, res) => {
+  const playlist = await musicService.getPlaylist();
+  res.json(playlist);
+});
 
 // Route handlers
 app.get('/waiting-room', (req, res) => {
@@ -36,14 +47,8 @@ app.get('/waiting-room', (req, res) => {
 const users = new Set();
 const messages = [];
 
-io.on('connection', async socket => {
+io.on('connection', socket => {
   console.log('Client connected');
-
-  // Send initial stickers and music data
-  const stickers = await stickerService.getStickers();
-  const playlist = await musicService.getPlaylist();
-  socket.emit('stickers', stickers);
-  socket.emit('playlist', playlist);
 
   socket.on('join line', (role) => {
     if (role !== 'viewer') {

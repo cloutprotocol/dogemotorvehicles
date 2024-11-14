@@ -6,60 +6,52 @@ import path from "path";
 const users = new Set();
 const messages = [];
 
-const stickerService = new StickerService(path.join(process.cwd(), 'public/stickers'));
-const musicService = new MusicService(path.join(process.cwd(), 'public/music'));
-
 export default async function SocketHandler(req, res) {
-  if (!res.socket.server.io) {
-    const io = new Server(res.socket.server, {
-      path: '/socket.io/',
-      transports: ['polling'],
-      cors: {
-        origin: "*",
-        methods: ["GET", "POST"],
-        credentials: true
-      },
-      allowEIO3: true,
-      pingTimeout: 60000,
-      pingInterval: 25000,
-      cookie: false
-    });
-
-    io.on('connection', async socket => {
-      console.log('Client connected to Vercel');
-
-      const stickers = await stickerService.getStickers();
-      const playlist = await musicService.getPlaylist();
-      socket.emit('stickers', stickers);
-      socket.emit('playlist', playlist);
-
-      socket.on('join line', (role) => {
-        console.log('User joined:', role);
-        if (role !== 'viewer') {
-          users.add(socket.id);
-          socket.username = role;
-          socket.emit('chat history', messages);
-        }
-        io.emit('line update', users.size);
-      });
-
-      socket.on('chat message', (msg) => {
-        if (socket.username && socket.username !== 'viewer') {
-          const message = { ...msg, id: socket.id };
-          messages.push(message);
-          io.emit('chat message', message);
-        }
-      });
-
-      socket.on('disconnect', () => {
-        if (socket.username && socket.username !== 'viewer') {
-          users.delete(socket.id);
-          io.emit('line update', users.size);
-        }
-      });
-    });
-
-    res.socket.server.io = io;
+  if (res.socket.server.io) {
+    res.end();
+    return;
   }
+
+  const io = new Server(res.socket.server, {
+    path: '/socket.io/',
+    addTrailingSlash: false,
+    transports: ['polling'],
+    cors: {
+      origin: "*",
+      methods: ["GET", "POST"]
+    },
+    pingTimeout: 60000,
+    pingInterval: 25000
+  });
+
+  io.on('connection', socket => {
+    console.log('Client connected to Vercel');
+
+    socket.on('join line', (role) => {
+      if (role !== 'viewer') {
+        users.add(socket.id);
+        socket.username = role;
+        socket.emit('chat history', messages);
+      }
+      io.emit('line update', users.size);
+    });
+
+    socket.on('chat message', (msg) => {
+      if (socket.username && socket.username !== 'viewer') {
+        const message = { ...msg, id: socket.id };
+        messages.push(message);
+        io.emit('chat message', message);
+      }
+    });
+
+    socket.on('disconnect', () => {
+      if (socket.username && socket.username !== 'viewer') {
+        users.delete(socket.id);
+        io.emit('line update', users.size);
+      }
+    });
+  });
+
+  res.socket.server.io = io;
   res.end();
 } 

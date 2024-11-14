@@ -628,12 +628,11 @@
     }
 
     function sendSticker(stickerName) {
-      const timestamp = new Date().toLocaleTimeString();
       socket.emit('chat message', {
-        text: `<img src="/stickers/${encodeURIComponent(stickerName)}" alt="sticker">`,
+        type: 'sticker',
+        content: `/stickers/${encodeURIComponent(stickerName)}`,
         username: username,
-        timestamp: timestamp,
-        isSticker: true
+        timestamp: new Date().toLocaleTimeString()
       });
       toggleStickers();
     }
