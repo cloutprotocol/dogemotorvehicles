@@ -1,9 +1,9 @@
 {
   "version": 2,
+  "nodeVersion": "18.x",
   "functions": {
     "api/**/*.js": {
-      "runtime": "@vercel/node",
-      "nodeVersion": "18.x"
+      "runtime": "@vercel/node"
     }
   },
   "routes": [
