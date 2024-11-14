@@ -466,24 +466,41 @@
         path: '/socket.io/',
         transports: ['polling'],
         reconnectionAttempts: 5,
-        reconnectionDelay: 1000
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        timeout: 10000,
+        autoConnect: true,
+        query: {
+            "t": Date.now()
+        }
     });
 
     socket.on('connect_error', (error) => {
         console.error('Connection error:', error);
         document.getElementById('messages').innerHTML += 
-          '<div class="system-message">Connection error. Attempting to reconnect...</div>';
+            `<div class="system-message">Connection error: ${error.message}. Attempting to reconnect...</div>`;
     });
 
-    // Add connection status logging
-    socket.on('connect', () => {
-        console.log('Connected to server:', socket.id);
-        document.body.classList.add('connected');
+    socket.on('error', (error) => {
+        console.error('Socket error:', error);
     });
 
-    socket.on('connect_error', (error) => {
-        console.error('Connection error:', error);
-        setTimeout(() => socket.connect(), 1000);
+    socket.on('disconnect', (reason) => {
+        console.log('Disconnected:', reason);
+        document.getElementById('messages').innerHTML += 
+            `<div class="system-message">Disconnected: ${reason}. Attempting to reconnect...</div>`;
+        
+        if (reason === 'io server disconnect') {
+            setTimeout(() => {
+                socket.connect();
+            }, 1000);
+        }
+    });
+
+    socket.on('connected', (data) => {
+        console.log('Connected with ID:', data.id);
+        document.getElementById('messages').innerHTML += 
+            '<div class="system-message">Connected to chat server</div>';
     });
 
     const form = document.getElementById('form');

@@ -5,7 +5,15 @@
     { "src": "public/**/*", "use": "@vercel/static" }
   ],
   "routes": [
-    { "src": "/socket.io/(.*)", "dest": "/api/chat.js" },
+    { 
+      "src": "/socket.io/(.*)", 
+      "dest": "/api/chat.js",
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type"
+      }
+    },
     { "src": "/stickers-list", "dest": "/api/stickers.js" },
     { "src": "/playlist", "dest": "/api/playlist.js" },
     { "src": "/waiting-room", "dest": "/public/chat.html" },
