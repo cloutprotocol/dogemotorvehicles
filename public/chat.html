@@ -462,17 +462,27 @@
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
+    let playlist = [];
+    let currentTrackIndex = 0;
+    let musicPlaying = false;
     const socket = io({
         path: '/socket.io/',
-        transports: ['polling'],
+        transports: ['polling', 'websocket'],
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,
         reconnectionDelayMax: 5000,
         timeout: 10000,
         autoConnect: true,
+        forceNew: true,
         query: {
             "t": Date.now()
         }
+    });
+
+    socket.on('connect', () => {
+        console.log('Connected to server with ID:', socket.id);
+        document.getElementById('messages').innerHTML += 
+            '<div class="system-message">Connected to chat server</div>';
     });
 
     socket.on('connect_error', (error) => {
@@ -658,10 +668,6 @@
     // Load stickers when page loads
     window.onload = loadStickers;
 
-    let playlist = [];
-    let currentTrackIndex = 0;
-    let musicPlaying = false;
-
     async function loadPlaylist() {
       try {
         const response = await fetch('/playlist');
@@ -712,7 +718,10 @@
             headerButton.textContent = '⏸️';
             equalizer.classList.add('playing');
           })
-          .catch(err => console.log('Music play failed:', err));
+          .catch(err => {
+            console.log('Music play failed:', err);
+            headerButton.textContent = '🎵';
+          });
       }
       musicPlaying = !musicPlaying;
     }
@@ -722,11 +731,11 @@
       nextTrack();
     });
 
-    // Load playlist when page loads
-    window.onload = () => {
+    // Initialize everything when the page loads
+    window.addEventListener('load', () => {
       loadStickers();
       loadPlaylist();
-    };
+    });
 
     input.addEventListener('input', () => {
       const linkRegex = /(https?:\/\/[^\s]+)|(www\.[^\s]+)|(\S+\.\S+\/\S*)|(\S+\.(com|org|net|io|xyz|eth|sol)\S*)/gi;

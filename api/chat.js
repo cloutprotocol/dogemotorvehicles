@@ -4,7 +4,16 @@ const users = new Set();
 const messages = [];
 
 export default async function handler(req, res) {
+  // Handle HTTP upgrade requests for WebSocket
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
+  console.log('Socket.IO handler called:', req.method, req.url);
+
   if (res.socket.server.io) {
+    console.log('Socket.IO server already running');
     res.end();
     return;
   }
@@ -12,26 +21,31 @@ export default async function handler(req, res) {
   const io = new Server(res.socket.server, {
     path: '/socket.io/',
     addTrailingSlash: false,
-    transports: ['polling'],
+    transports: ['polling', 'websocket'],
     cors: {
       origin: "*",
-      methods: ["GET", "POST"]
+      methods: ["GET", "POST", "OPTIONS"],
+      credentials: true
     },
     pingTimeout: 10000,
     pingInterval: 5000,
     upgradeTimeout: 5000,
     maxHttpBufferSize: 1e6,
-    connectTimeout: 10000,
-    allowEIO3: true,
-    serveClient: false
+    connectTimeout: 10000
   });
 
-  io.on('connection', (socket) => {
-    console.log('Client connected:', socket.id);
+  // Store state
+  res.socket.server.users = users;
+  res.socket.server.messages = messages;
 
+  io.on('connection', (socket) => {
+    console.log('New client connected:', socket.id);
+    
+    // Send immediate acknowledgment
     socket.emit('connected', { id: socket.id });
 
     socket.on('join line', (role) => {
+      console.log('Join line:', socket.id, role);
       if (role !== 'viewer') {
         users.add(socket.id);
         socket.username = role;
@@ -40,16 +54,8 @@ export default async function handler(req, res) {
       io.emit('line update', users.size);
     });
 
-    socket.on('chat message', (msg) => {
-      if (socket.username && socket.username !== 'viewer') {
-        const message = { ...msg, id: socket.id };
-        messages.push(message);
-        io.emit('chat message', message);
-      }
-    });
-
-    socket.on('disconnect', () => {
-      console.log('Client disconnected:', socket.id);
+    socket.on('disconnect', (reason) => {
+      console.log('Client disconnected:', socket.id, reason);
       if (socket.username && socket.username !== 'viewer') {
         users.delete(socket.id);
         io.emit('line update', users.size);
@@ -57,10 +63,11 @@ export default async function handler(req, res) {
     });
 
     socket.on('error', (error) => {
-      console.error('Socket error:', error);
+      console.error('Socket error for client:', socket.id, error);
     });
   });
 
   res.socket.server.io = io;
+  console.log('Socket.IO server initialized');
   res.end();
 } 

@@ -11,8 +11,12 @@
       "headers": {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type"
-      }
+        "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Requested-With",
+        "Access-Control-Allow-Credentials": "true",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Vary": "Accept-Encoding, Origin"
+      },
+      "continue": true
     },
     { "src": "/stickers-list", "dest": "/api/stickers.js" },
     { "src": "/playlist", "dest": "/api/playlist.js" },
