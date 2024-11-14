@@ -13,5 +13,10 @@
     { "src": "/stickers/(.*)", "dest": "/public/stickers/$1" },
     { "src": "/music/(.*)", "dest": "/public/music/$1" },
     { "src": "/(.*)", "dest": "/public/$1" }
-  ]
+  ],
+  "functions": {
+    "api/**/*.js": {
+      "maxDuration": 10
+    }
+  }
 } 

@@ -465,13 +465,14 @@
     const socket = io({
         path: '/socket.io/',
         transports: ['polling'],
-        reconnection: true,
         reconnectionAttempts: 5,
-        timeout: 10000
+        reconnectionDelay: 1000
     });
 
-    socket.on("connect_error", (err) => {
-        console.log(`connect_error due to ${err.message}`);
+    socket.on('connect_error', (error) => {
+        console.error('Connection error:', error);
+        document.getElementById('messages').innerHTML += 
+          '<div class="system-message">Connection error. Attempting to reconnect...</div>';
     });
 
     // Add connection status logging
