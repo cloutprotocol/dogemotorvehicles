@@ -8,13 +8,11 @@ const MusicService = require('./api/services/musicService');
 const app = express();
 const httpServer = createServer(app);
 
-// Initialize services
 const stickerService = new StickerService(path.join(__dirname, 'public/stickers'));
 const musicService = new MusicService(path.join(__dirname, 'public/music'));
 
 const io = new Server(httpServer, {
   path: '/socket.io/',
-  addTrailingSlash: false,
   cors: {
     origin: "*",
     methods: ["GET", "POST"]
@@ -24,10 +22,8 @@ const io = new Server(httpServer, {
   pingInterval: 25000
 });
 
-// Serve static files from public directory
 app.use(express.static('public'));
 
-// API Routes
 app.get('/stickers-list', async (req, res) => {
   const stickers = await stickerService.getStickers();
   res.json(stickers);
@@ -38,12 +34,10 @@ app.get('/playlist', async (req, res) => {
   res.json(playlist);
 });
 
-// Route handlers
 app.get('/waiting-room', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/chat.html'));
 });
 
-// Socket.IO logic
 const users = new Set();
 const messages = [];
 
@@ -75,7 +69,6 @@ io.on('connection', socket => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
-httpServer.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+httpServer.listen(3000, () => {
+  console.log('Server listening on port 3000');
 }); 
