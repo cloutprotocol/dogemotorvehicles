@@ -14,5 +14,11 @@
     { "src": "^/chat.html", "dest": "/public/chat.html" },
     { "src": "/(.+)", "dest": "/public/$1" }
   ],
-  "regions": ["sfo1"]
+  "regions": ["sfo1"],
+  "functions": {
+    "api/chat.js": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  }
 } 

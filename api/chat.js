@@ -12,13 +12,16 @@ const musicService = new MusicService(path.join(process.cwd(), 'public/music'));
 export default async function SocketHandler(req, res) {
   if (!res.socket.server.io) {
     const io = new Server(res.socket.server, {
-      path: '/socket.io',
-      addTrailingSlash: false,
+      path: '/socket.io/',
+      transports: ['polling'],
       cors: {
         origin: "*",
         methods: ["GET", "POST"],
         credentials: true
-      }
+      },
+      allowEIO3: true,
+      pingTimeout: 60000,
+      pingInterval: 25000
     });
 
     io.on('connection', async socket => {
