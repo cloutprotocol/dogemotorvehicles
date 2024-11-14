@@ -14,14 +14,16 @@ export default async function SocketHandler(req, res) {
 
   const io = new Server(res.socket.server, {
     path: '/socket.io/',
-    addTrailingSlash: false,
     transports: ['polling'],
     cors: {
       origin: "*",
-      methods: ["GET", "POST"]
+      methods: ["GET", "POST", "OPTIONS"],
+      credentials: false
     },
+    allowEIO3: true,
     pingTimeout: 60000,
-    pingInterval: 25000
+    pingInterval: 25000,
+    cookie: false
   });
 
   io.on('connection', socket => {

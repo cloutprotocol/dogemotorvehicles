@@ -5,6 +5,15 @@
     { "src": "public/**/*", "use": "@vercel/static" }
   ],
   "routes": [
+    {
+      "src": "/socket.io/(.*)",
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+        "Access-Control-Allow-Headers": "*"
+      },
+      "continue": true
+    },
     { "src": "/socket.io/(.*)", "dest": "/api/chat.js" },
     { "src": "/stickers-list", "dest": "/api/stickers.js" },
     { "src": "/playlist", "dest": "/api/playlist.js" },

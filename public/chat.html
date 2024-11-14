@@ -471,7 +471,10 @@
         reconnectionDelay: 1000,
         timeout: 20000,
         withCredentials: false,
-        forceNew: true
+        forceNew: true,
+        auth: {
+          token: 'anonymous'
+        }
     });
 
     // Add connection status logging
