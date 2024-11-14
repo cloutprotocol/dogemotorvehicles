@@ -4,7 +4,6 @@ const users = new Set();
 const messages = [];
 
 export default async function handler(req, res) {
-  // Handle HTTP upgrade requests for WebSocket
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
@@ -20,18 +19,16 @@ export default async function handler(req, res) {
 
   const io = new Server(res.socket.server, {
     path: '/socket.io/',
-    addTrailingSlash: false,
-    transports: ['polling', 'websocket'],
+    transports: ['polling'],
     cors: {
       origin: "*",
       methods: ["GET", "POST", "OPTIONS"],
       credentials: true
     },
-    pingTimeout: 10000,
-    pingInterval: 5000,
-    upgradeTimeout: 5000,
-    maxHttpBufferSize: 1e6,
-    connectTimeout: 10000
+    pingTimeout: 60000,
+    pingInterval: 25000,
+    connectTimeout: 30000,
+    allowEIO3: true
   });
 
   // Store state
@@ -41,7 +38,6 @@ export default async function handler(req, res) {
   io.on('connection', (socket) => {
     console.log('New client connected:', socket.id);
     
-    // Send immediate acknowledgment
     socket.emit('connected', { id: socket.id });
 
     socket.on('join line', (role) => {
@@ -52,6 +48,14 @@ export default async function handler(req, res) {
         socket.emit('chat history', messages);
       }
       io.emit('line update', users.size);
+    });
+
+    socket.on('chat message', (msg) => {
+      if (socket.username && socket.username !== 'viewer') {
+        const message = { ...msg, id: socket.id };
+        messages.push(message);
+        io.emit('chat message', message);
+      }
     });
 
     socket.on('disconnect', (reason) => {
@@ -69,5 +73,10 @@ export default async function handler(req, res) {
 
   res.socket.server.io = io;
   console.log('Socket.IO server initialized');
-  res.end();
+  
+  // Send success response
+  res.writeHead(200, {
+    'Content-Type': 'text/plain'
+  });
+  res.end('Socket.IO server running');
 } 

@@ -467,16 +467,28 @@
     let musicPlaying = false;
     const socket = io({
         path: '/socket.io/',
-        transports: ['polling', 'websocket'],
-        reconnectionAttempts: 5,
+        transports: ['polling'],
+        reconnectionAttempts: Infinity,
         reconnectionDelay: 1000,
         reconnectionDelayMax: 5000,
-        timeout: 10000,
+        timeout: 20000,
         autoConnect: true,
-        forceNew: true,
         query: {
-            "t": Date.now()
+            "t": Date.now(),
+            "EIO": "4"
         }
+    });
+
+    socket.io.on("error", (error) => {
+        console.error('Transport error:', error);
+    });
+
+    socket.io.on("reconnect_attempt", (attempt) => {
+        console.log('Reconnection attempt:', attempt);
+    });
+
+    socket.io.on("reconnect", (attempt) => {
+        console.log('Reconnected after', attempt, 'attempts');
     });
 
     socket.on('connect', () => {
