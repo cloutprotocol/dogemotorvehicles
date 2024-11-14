@@ -27,4 +27,5 @@ pids
 Thumbs.db
 
 # Vercel
+.vercel/
 .vercel
