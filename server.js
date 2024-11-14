@@ -63,6 +63,7 @@ app.get('/waiting-room', (req, res) => {
 });
 
 const users = new Set();
+const MAX_HISTORY = 50;
 const messages = [];
 
 io.on('connection', socket => {
@@ -72,15 +73,28 @@ io.on('connection', socket => {
     if (role !== 'viewer') {
       users.add(socket.id);
       socket.username = role;
-      socket.emit('chat history', messages);
+      
+      socket.emit('system message', {
+        type: 'welcome',
+        content: `👋 Welcome to the $DMV Waiting Room!\n\nShowing last ${messages.length} messages...`
+      });
+      
+      if (messages.length > 0) {
+        socket.emit('chat history', messages);
+      }
     }
     io.emit('line update', users.size);
   });
 
   socket.on('chat message', (msg) => {
     if (socket.username && socket.username !== 'viewer') {
-      const message = { ...msg, id: socket.id };
+      const message = { ...msg, id: socket.id, timestamp: Date.now() };
       messages.push(message);
+      
+      if (messages.length > MAX_HISTORY) {
+        messages.shift();
+      }
+      
       io.emit('chat message', message);
     }
   });

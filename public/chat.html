@@ -416,11 +416,13 @@
 
     .system-message {
       text-align: center;
-      padding: 10px;
-      margin: 10px 0;
-      background: rgba(0, 102, 204, 0.1);
+      padding: 15px;
+      margin: 10px 20px;
+      background: rgba(255, 215, 0, 0.1);
+      border: 1px solid rgba(255, 215, 0, 0.3);
       border-radius: 8px;
-      color: #0066CC;
+      color: #333;
+      font-family: 'Comic Sans MS', cursive;
       white-space: pre-line;
     }
 
@@ -865,6 +867,13 @@
         welcomeDiv.className = 'system-message';
         welcomeDiv.textContent = msg.content;
         chatBox.appendChild(welcomeDiv);
+        
+        // Remove welcome message after chat history loads
+        setTimeout(() => {
+          welcomeDiv.style.opacity = '0';
+          welcomeDiv.style.transition = 'opacity 0.5s';
+          setTimeout(() => welcomeDiv.remove(), 500);
+        }, 5000);
       }
     });
 
@@ -881,6 +890,38 @@
     // Update raid link on load and every 30 seconds
     updateRaidLink();
     setInterval(updateRaidLink, 30000);
+
+    socket.on('chat history', (history) => {
+      const chatBox = document.querySelector('.chat-messages');
+      
+      history.forEach(msg => {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message';
+        
+        if (msg.type === 'sticker') {
+          const img = document.createElement('img');
+          img.src = msg.content;
+          img.className = 'sticker';
+          messageDiv.appendChild(img);
+        } else {
+          messageDiv.textContent = msg.content;
+        }
+        
+        chatBox.appendChild(messageDiv);
+      });
+      
+      // Scroll to bottom after loading history
+      chatBox.scrollTop = chatBox.scrollHeight;
+    });
+
+    socket.on('system message', (msg) => {
+      const chatBox = document.querySelector('.chat-messages');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'system-message';
+      messageDiv.textContent = msg.content;
+      chatBox.appendChild(messageDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    });
   </script>
 </body>
 </html> 
