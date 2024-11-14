@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DMV Raid Admin</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    
+    input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    
+    button {
+      background: #0066CC;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    button:hover {
+      background: #0052a3;
+    }
+    
+    .success {
+      color: green;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Update Raid Link</h1>
+  
+  <form id="raidForm">
+    <div class="form-group">
+      <label for="name">Raid Name:</label>
+      <input type="text" id="name" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="url">Raid URL:</label>
+      <input type="url" id="url" required>
+    </div>
+    
+    <button type="submit">Update Raid</button>
+  </form>
+  
+  <div id="message"></div>
+
+  <script>
+    document.getElementById('raidForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const data = {
+        name: document.getElementById('name').value,
+        url: document.getElementById('url').value
+      };
+      
+      try {
+        const res = await fetch('/api/raid', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        if (res.ok) {
+          document.getElementById('message').innerHTML = 
+            '<p class="success">Raid link updated successfully!</p>';
+        }
+      } catch (err) {
+        document.getElementById('message').innerHTML = 
+          `<p style="color:red">Error: ${err.message}</p>`;
+      }
+    });
+  </script>
+</body>
+</html> 

@@ -21,6 +21,8 @@
     { "src": "^/$", "dest": "/public/index.html" },
     { "src": "/stickers/(.*)", "dest": "/public/stickers/$1" },
     { "src": "/music/(.*)", "dest": "/public/music/$1" },
-    { "src": "/(.*)", "dest": "/public/$1" }
+    { "src": "/(.*)", "dest": "/public/$1" },
+    { "src": "/raid", "dest": "/public/raid.html" },
+    { "src": "/api/raid", "dest": "/api/raid.js" }
   ]
 } 

@@ -24,6 +24,30 @@ const io = new Server(httpServer, {
 
 app.use(express.static('public'));
 
+let currentRaid = {
+  name: 'No Active Raid',
+  url: '#'
+};
+
+app.get('/api/raid', (req, res) => {
+  res.json(currentRaid);
+});
+
+app.post('/api/raid', express.json(), (req, res) => {
+  const { name, url } = req.body;
+  
+  if (!name || !url) {
+    return res.status(400).json({ error: 'Name and URL required' });
+  }
+  
+  currentRaid = { name, url };
+  return res.json({ success: true });
+});
+
+app.get('/raid', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/raid.html'));
+});
+
 app.get('/stickers-list', async (req, res) => {
   const stickers = await stickerService.getStickers();
   res.json(stickers);
