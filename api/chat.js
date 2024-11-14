@@ -21,7 +21,8 @@ export default async function SocketHandler(req, res) {
       },
       allowEIO3: true,
       pingTimeout: 60000,
-      pingInterval: 25000
+      pingInterval: 25000,
+      cookie: false
     });
 
     io.on('connection', async socket => {
