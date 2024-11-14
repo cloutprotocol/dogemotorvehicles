@@ -1,9 +1,7 @@
 {
   "version": 2,
   "functions": {
-    "api/**/*.js": {
-      "runtime": "@vercel/node"
-    }
+    "api/**/*.js": {}
   },
   "routes": [
     { "src": "/socket.io/(.*)", "dest": "/api/chat.js" },
