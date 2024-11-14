@@ -1,8 +1,9 @@
 {
   "version": 2,
-  "functions": {
-    "api/**/*.js": {}
-  },
+  "builds": [
+    { "src": "api/**/*.js", "use": "@vercel/node" },
+    { "src": "public/**/*", "use": "@vercel/static" }
+  ],
   "routes": [
     { "src": "/socket.io/(.*)", "dest": "/api/chat.js" },
     { "src": "/stickers-list", "dest": "/api/stickers.js" },
